@@ -21,9 +21,11 @@ for(let y = 0 ; y < 10 ; y++){
 
 var box = {
   shape:[
-    [0,0,1],
-    [0,0,1],
-    [0,1,1]
+    [0,0,1,0,0],
+    [0,0,1,0,0],
+    [0,0,1,0,0],
+    [0,0,1,0,0],
+    [0,0,1,0,0]
   ]
 }
 // getBoundingClientRect()
@@ -41,17 +43,21 @@ pendingOne.addEventListener('mousedown', function (e) {
   startY = e.clientY
 })
 document.addEventListener('mouseup', function (e) {
-  isMouseDown = false
+  if(isMouseDown){
+    isMouseDown = false
 
-  let posX = parseInt((pendingOne.getBoundingClientRect().left - frameX) / 50)
-  let posY = parseInt((pendingOne.getBoundingClientRect().top - frameY) / 50)
+    let posX = Math.floor(((pendingOne.getBoundingClientRect().left - frameX) + 25) / 50)
+    let posY = Math.floor(((pendingOne.getBoundingClientRect().top - frameY) + 25) / 50)
 
+    console.log(posX,posY)
+    fillTable(box,{x:posX,y:posY})
 
-  fillTable(box,{x:posX,y:posY})
+    pendingOne.style.left = 0 + "px"
+    pendingOne.style.top = 0 + "px"
 
-  pendingOne.getBoundingClientRect().top - frameY
-  pendingOne.style.left = 0 + "px"
-  pendingOne.style.top = 0 + "px"
+    // console.log(table)
+
+  }
 
 
 })
@@ -70,18 +76,25 @@ document.addEventListener('mousemove', function(e) {
 });
 
 function fillTable(box,point) {
-  
+  box.shape.some((row, y) => {
+    row.some((value, x) => {
+      if(value === 1){
+        table[y+point.y][x+point.x] = 1
+        count = (y+point.y)*10 + (x+point.x)
+        cols[count].classList.add('blue')
+      }
+    })
+  })
 }
 
 function pendingBoxdraw(box) {
   box.shape.some((row, y) => {
     row.some((value, x) => {
       if(value === 1){
-        let count = y*3 + x
+        let count = y*5 + x
         pendingCols[count].classList.add('blue')
       }
     })
   })
 }
 pendingBoxdraw(box)
-console.table(table)
