@@ -79,9 +79,11 @@ function fillTable(box,point) {
   box.shape.some((row, y) => {
     row.some((value, x) => {
       if(value === 1){
-        table[y+point.y][x+point.x] = 1
-        count = (y+point.y)*10 + (x+point.x)
-        cols[count].classList.add('blue')
+        if((y+point.y) > 0 && (x+point.x) > 0){
+          table[y+point.y][x+point.x] = 1
+          count = (y+point.y)*10 + (x+point.x)
+          cols[count].classList.add('blue')          
+        }
       }
     })
   })
