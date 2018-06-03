@@ -1,33 +1,23 @@
 var rows = document.querySelectorAll('.row')
 var cols = document.querySelectorAll('.col')
-
 var pendingCols = document.querySelectorAll('.pendingOne .col')
 let table = []
-for(let i = 0 ; i < 10 ; i++){
-  table[i] = []
-  for(let j = 0 ; j < 10 ; j++){
-    table[i][j] = {
+for(let y = 0 ; y < 10 ; y++){
+  table[y] = []
+  for(let x = 0 ; x < 10 ; x++){
+    table[y][x] = {
       value:0,
       range:{
-        startX:0,
-        endX:0,
-        startY:0,
-        endY:0
+        startX:x*50,
+        startY:y*50,
+        endX:(x+1)*50,
+        endY:(y+1)*50
       }
     }
   }
 }
 
-function draw(box) {
-  box.shape.some((row, y) => {
-    row.some((value, x) => {
-      if(value === 1){
-        let count = y*3 + x
-        pendingCols[count].classList.add('blue')
-      }
-    })
-  })
-}
+
 
 var box = {
   shape:[
@@ -37,6 +27,10 @@ var box = {
   ]
 }
 // getBoundingClientRect()
+var frame = document.querySelector('.frame')
+var frameX = frame.getBoundingClientRect().left
+var frameY = frame.getBoundingClientRect().top
+
 
 var pendingOne = document.querySelector('.pendingOne')
 var isMouseDown = false
@@ -49,10 +43,16 @@ pendingOne.addEventListener('mousedown', function (e) {
 document.addEventListener('mouseup', function (e) {
   isMouseDown = false
 
-  console.log(pendingOne.getBoundingClientRect().left);
-  console.log(pendingOne.getBoundingClientRect().top);
+  let posX = parseInt((pendingOne.getBoundingClientRect().left - frameX) / 50)
+  let posY = parseInt((pendingOne.getBoundingClientRect().top - frameY) / 50)
+
+
+  fillTable(box,{x:posX,y:posY})
+
+  pendingOne.getBoundingClientRect().top - frameY
   pendingOne.style.left = 0 + "px"
   pendingOne.style.top = 0 + "px"
+
 
 })
 document.addEventListener('mousemove', function(e) {
@@ -69,4 +69,19 @@ document.addEventListener('mousemove', function(e) {
   }
 });
 
-draw(box)
+function fillTable(box,point) {
+  
+}
+
+function pendingBoxdraw(box) {
+  box.shape.some((row, y) => {
+    row.some((value, x) => {
+      if(value === 1){
+        let count = y*3 + x
+        pendingCols[count].classList.add('blue')
+      }
+    })
+  })
+}
+pendingBoxdraw(box)
+console.table(table)
