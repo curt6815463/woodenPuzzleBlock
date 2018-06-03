@@ -1,0 +1,26 @@
+.frame{
+  height: 500px;
+  width: 500px;
+  margin: 5em auto;
+}
+.row{
+  height: 50px;
+  display: flex;
+}
+.col{
+  width: 50px;
+  outline: 1px solid red;
+}
+.blue{
+  background-color: blue;
+}
+.pendingBox{
+  position: relative;
+  margin: 0 auto;
+  width: 500px;
+  height: 300px;
+}
+.pendingOne{
+  position: absolute;
+
+}
