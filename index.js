@@ -5,15 +5,7 @@ let table = []
 for(let y = 0 ; y < 10 ; y++){
   table[y] = []
   for(let x = 0 ; x < 10 ; x++){
-    table[y][x] = {
-      value:0,
-      range:{
-        startX:x*50,
-        startY:y*50,
-        endX:(x+1)*50,
-        endY:(y+1)*50
-      }
-    }
+    table[y][x] = 0
   }
 }
 
@@ -21,11 +13,37 @@ for(let y = 0 ; y < 10 ; y++){
 
 var box = {
   shape:[
-    [0,0,1,0,0],
-    [0,0,1,0,0],
-    [0,0,1,0,0],
-    [0,0,1,0,0],
-    [0,0,1,0,0]
+    [
+      [0,0,1],
+      [0,0,1],
+      [1,1,1]
+    ],
+    [
+      [1],
+      [1],
+      [1]
+    ],
+    [
+      [1,1,1]
+    ],
+    [
+      [1,1,1],
+      [1,1,1],
+      [1,1,1],
+    ],
+    [
+      [1],
+      [1],
+      [1],
+      [1],
+      [1]
+    ],
+    [
+      [1,1,1,1,1]
+    ],
+    [
+      [1]
+    ],
   ]
 }
 
@@ -37,11 +55,27 @@ var box2 = {
     [1]
   ]
 }
-function createPendingBox(box2) {
+var pendingBoxComparisonTable = {}
+function createPendingBox() {
+  for(let i = 0 ; i < 1 ; i++){
+    let randNum = Math.floor(Math.random() * (box.shape.length-1 - 0 + 1)) + 0;
+    // randNum = 4
+    createPendingBoxDom(box.shape[randNum])
+    pendingBoxComparisonTable.pendingOne = box.shape[randNum]
+  }
+}
+
+
+function removePendingBoxDom(id) {
+  let removeDom = document.querySelector('.pendingOne')
+  while(removeDom.hasChildNodes()){
+    removeDom.removeChild(removeDom.lastChild)
+  }
+}
+function createPendingBoxDom(box) {
   let nodeY
   let nodeX
-
-  box2.shape.some((row, y) => {
+  box.some((row, y) => {
     nodeY = document.createElement('div')
     nodeY.classList.add('row')
     row.some((value, x) => {
@@ -53,7 +87,8 @@ function createPendingBox(box2) {
     })
   })
 }
-createPendingBox(box2)
+
+
 // getBoundingClientRect()
 var frame = document.querySelector('.frame')
 var frameX = frame.getBoundingClientRect().left
@@ -63,11 +98,55 @@ var frameY = frame.getBoundingClientRect().top
 var pendingOne = document.querySelector('.pendingOne')
 var isMouseDown = false
 var startX = 0, startY = 0, endX = 0, endY = 0
+var selectedBox = ''
 pendingOne.addEventListener('mousedown', function (e) {
   isMouseDown = true
   startX = e.clientX
   startY = e.clientY
+  selectedBox = 'pendingOne'
 })
+
+function getFullLine() {
+  let xFullLine = []
+  let yFullLine = []
+
+  for (var i = 0; i < 10; i++) {
+    let tempXLineFull = true
+    let tempYLineFull = true
+    for (var j = 0; j < 10; j++) {
+      if(table[i][j] !== 1){
+        tempXLineFull = false
+      }
+      if(table[j][i] !== 1){
+        tempYLineFull = false
+      }
+    }
+    if(tempXLineFull){
+      xFullLine.push(i)
+    }
+    if(tempYLineFull){
+      yFullLine.push(i)
+    }
+  }
+  return {
+    xFullLine:xFullLine,
+    yFullLine:yFullLine
+  }
+}
+function clearFullLine(fullLine) {
+  fullLine.xFullLine.some((x)=>{
+    for(let i = 0 ; i < 10 ; i++){
+        table[x][i] = 0
+        cols[x*10+i].classList.remove('blue')
+    }
+  })
+  fullLine.yFullLine.some((y)=>{
+    for(let i = 0 ; i < 10 ; i++){
+        table[i][y] = 0
+        cols[y+i*10].classList.remove('blue')
+    }
+  })
+}
 document.addEventListener('mouseup', function (e) {
   if(isMouseDown){
     isMouseDown = false
@@ -76,16 +155,19 @@ document.addEventListener('mouseup', function (e) {
     let posY = Math.floor(((pendingOne.getBoundingClientRect().top - frameY) + 25) / 50)
 
     // console.log(posX,posY)
-    fillTable(box2,{x:posX,y:posY})
+    let result = fillTable(pendingBoxComparisonTable.pendingOne,{x:posX,y:posY})
 
     pendingOne.style.left = 0 + "px"
     pendingOne.style.top = 0 + "px"
 
     // console.log(table)
-
+    if(result === 'success'){
+      removePendingBoxDom()
+      createPendingBox()
+      // console.log(getFullLine());
+      clearFullLine(getFullLine())
+    }
   }
-
-
 })
 document.addEventListener('mousemove', function(e) {
   if(isMouseDown){
@@ -101,11 +183,11 @@ document.addEventListener('mousemove', function(e) {
   }
 });
 
-function fillTable(box2,point) {
+function fillTable(box,point) {
   let fillGridList = []
   let outOfBound = false
   let boxFillEmpty = true
-  box2.shape.some((row, y) => {
+  box.some((row, y) => {
     row.some((value, x) => {
       // console.log(y+point.y,x+point.x,value)
       if(value === 1){
@@ -137,7 +219,7 @@ function fillTable(box2,point) {
         cols[grid.count].classList.add('blue')
         table[grid.y][grid.x] = 1
       })
-
+      return 'success'
     }
   }
 }
@@ -149,6 +231,7 @@ function checkGridEmpty(x,y) {
     return true
   }
 }
+createPendingBox()
 
 // function pendingBoxdraw(box) {
 //   box.shape.some((row, y) => {
