@@ -28,3 +28,9 @@
   position: absolute;
   left: 300px;
 }
+.scoreboard{
+  position: fixed;
+  left: 100px;
+  right: 100px;
+  
+}

@@ -1,7 +1,9 @@
 var rows = document.querySelectorAll('.row')
 var cols = document.querySelectorAll('.col')
 var pendingCols = document.querySelectorAll('.pendingOne .col')
+var scoreboard = document.querySelector('.scoreboard')
 let table = []
+let score = 0
 for(let y = 0 ; y < 10 ; y++){
   table[y] = []
   for(let x = 0 ; x < 10 ; x++){
@@ -146,6 +148,9 @@ function clearFullLine(fullLine) {
         cols[y+i*10].classList.remove('blue')
     }
   })
+
+  score += fullLine.xFullLine.length + fullLine.yFullLine.length
+  scoreboard.innerHTML = score
 }
 document.addEventListener('mouseup', function (e) {
   if(isMouseDown){
@@ -167,6 +172,7 @@ document.addEventListener('mouseup', function (e) {
       // console.log(getFullLine());
       clearFullLine(getFullLine())
     }
+
   }
 })
 document.addEventListener('mousemove', function(e) {
