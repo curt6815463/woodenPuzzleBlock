@@ -6,7 +6,15 @@ let table = []
 for(let i = 0 ; i < 10 ; i++){
   table[i] = []
   for(let j = 0 ; j < 10 ; j++){
-    table[i][j] = 0
+    table[i][j] = {
+      value:0,
+      range:{
+        startX:0,
+        endX:0,
+        startY:0,
+        endY:0
+      }
+    }
   }
 }
 
@@ -45,6 +53,7 @@ document.addEventListener('mouseup', function (e) {
   console.log(pendingOne.getBoundingClientRect().top);
   pendingOne.style.left = 0 + "px"
   pendingOne.style.top = 0 + "px"
+
 })
 document.addEventListener('mousemove', function(e) {
   if(isMouseDown){
