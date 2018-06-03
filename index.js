@@ -28,6 +28,32 @@ var box = {
     [0,0,1,0,0]
   ]
 }
+
+var box2 = {
+  shape:[
+    [1],
+    [1],
+    [1],
+    [1]
+  ]
+}
+function createPendingBox(box2) {
+  let nodeY
+  let nodeX
+
+  box2.shape.some((row, y) => {
+    nodeY = document.createElement('div')
+    nodeY.classList.add('row')
+    row.some((value, x) => {
+      nodeX = document.createElement('div')
+      nodeX.classList.add('col')
+      if(value){nodeX.classList.add('blue')}
+      nodeY.appendChild(nodeX)
+      document.querySelector('.pendingOne').appendChild(nodeY)
+    })
+  })
+}
+createPendingBox(box2)
 // getBoundingClientRect()
 var frame = document.querySelector('.frame')
 var frameX = frame.getBoundingClientRect().left
@@ -49,8 +75,8 @@ document.addEventListener('mouseup', function (e) {
     let posX = Math.floor(((pendingOne.getBoundingClientRect().left - frameX) + 25) / 50)
     let posY = Math.floor(((pendingOne.getBoundingClientRect().top - frameY) + 25) / 50)
 
-    console.log(posX,posY)
-    fillTable(box,{x:posX,y:posY})
+    // console.log(posX,posY)
+    fillTable(box2,{x:posX,y:posY})
 
     pendingOne.style.left = 0 + "px"
     pendingOne.style.top = 0 + "px"
@@ -75,28 +101,64 @@ document.addEventListener('mousemove', function(e) {
   }
 });
 
-function fillTable(box,point) {
-  box.shape.some((row, y) => {
+function fillTable(box2,point) {
+  let fillGridList = []
+  let outOfBound = false
+  let boxFillEmpty = true
+  box2.shape.some((row, y) => {
     row.some((value, x) => {
+      // console.log(y+point.y,x+point.x,value)
       if(value === 1){
-        if((y+point.y) > 0 && (x+point.x) > 0){
-          table[y+point.y][x+point.x] = 1
-          count = (y+point.y)*10 + (x+point.x)
-          cols[count].classList.add('blue')          
+        if((y+point.y) >= 0 && (x+point.x) >= 0 &&
+          (y+point.y) < 10 && ((x+point.x) < 10)){
+          if(checkGridEmpty(x+point.x,y+point.y)){
+            let count = (y+point.y)*10 + (x+point.x)
+            grid = {
+              x:x+point.x,
+              y:y+point.y,
+              count:count
+            }
+            fillGridList.push(grid)
+          }
+          else {
+            boxFillEmpty = false
+          }
         }
+        else {
+          outOfBound = true
+        }
+
       }
     })
   })
+  if(!outOfBound){
+    if(boxFillEmpty){
+      fillGridList.some((grid)=>{
+        cols[grid.count].classList.add('blue')
+        table[grid.y][grid.x] = 1
+      })
+
+    }
+  }
+}
+function checkGridEmpty(x,y) {
+  if(table[y][x] === 1){
+    return false
+  }
+  else {
+    return true
+  }
 }
 
-function pendingBoxdraw(box) {
-  box.shape.some((row, y) => {
-    row.some((value, x) => {
-      if(value === 1){
-        let count = y*5 + x
-        pendingCols[count].classList.add('blue')
-      }
-    })
-  })
-}
-pendingBoxdraw(box)
+// function pendingBoxdraw(box) {
+//   box.shape.some((row, y) => {
+//     row.some((value, x) => {
+//       if(value === 1){
+//         let count = y*5 + x
+//         console.log(count);
+//         pendingCols[count].classList.add('blue')
+//       }
+//     })
+//   })
+// }
+// pendingBoxdraw(box)
