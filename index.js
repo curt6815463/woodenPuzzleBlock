@@ -68,8 +68,8 @@ function createPendingBox(pendingBox) {
 }
 
 
-function removePendingBoxDom(id) {
-  let removeDom = document.querySelector('.pendingOne')
+function removePendingBoxDom(selectedBox) {
+  let removeDom = document.querySelector(`.${selectedBox}`)
   while(removeDom.hasChildNodes()){
     removeDom.removeChild(removeDom.lastChild)
   }
@@ -171,18 +171,32 @@ function clearFullLine(fullLine) {
 document.addEventListener('mouseup', function (e) {
   if(isMouseDown){
     isMouseDown = false
+    let pendingBox = document.querySelector(`.${selectedBox}`);
+    let posX = Math.floor(((pendingBox.getBoundingClientRect().left - frameX) + 25) / 50)
+    let posY = Math.floor(((pendingBox.getBoundingClientRect().top - frameY) + 25) / 50)
 
-    let posX = Math.floor(((pendingOne.getBoundingClientRect().left - frameX) + 25) / 50)
-    let posY = Math.floor(((pendingOne.getBoundingClientRect().top - frameY) + 25) / 50)
+    let result = fillTable(pendingBoxComparisonTable[selectedBox],{x:posX,y:posY})
+    console.log(selectedBox);
+    switch (selectedBox) {
+      case 'pendingOne':
+        pendingBox.style.left = 0 + "px"
+        pendingBox.style.top = 0 + "px"
+        break;
+      case 'pendingTwo':
+        pendingBox.style.left = 300 + "px"
+        pendingBox.style.top = 0 + "px"
+        break;
+      case 'pendingThree':
+        pendingBox.style.left = 600 + "px"
+        pendingBox.style.top = 0 + "px"
+        break;
+      default:
 
-    let result = fillTable(pendingBoxComparisonTable['pendingOne'],{x:posX,y:posY})
-
-    pendingOne.style.left = 0 + "px"
-    pendingOne.style.top = 0 + "px"
+    }
 
     if(result === 'success'){
-      removePendingBoxDom()
-      createPendingBox('pendingOne')
+      removePendingBoxDom(selectedBox)
+      createPendingBox(selectedBox)
       clearFullLine(getFullLine())
     }
 
@@ -195,9 +209,22 @@ document.addEventListener('mousemove', function(e) {
 
     let offsetX = endX - startX
     let offsetY = endY - startY
+    let pendingBox = document.querySelector(`.${selectedBox}`);
+    switch (selectedBox) {
+      case 'pendingOne':
+        offsetX += 0
+        break;
+      case 'pendingTwo':
+        offsetX += 300
+        break;
+      case 'pendingThree':
+        offsetX += 600
+        break;
+      default:
 
-    pendingOne.style.left = offsetX + "px"
-    pendingOne.style.top = offsetY + "px"
+    }
+    pendingBox.style.left = offsetX + "px"
+    pendingBox.style.top = offsetY + "px"
 
   }
 });
