@@ -196,10 +196,17 @@ document.addEventListener('mouseup', function (e) {
 
     if(result === 'success'){
       removePendingBoxDom(selectedBox)
-      createPendingBox(selectedBox)
+      // createPendingBox(selectedBox)
       clearFullLine(getFullLine())
     }
-
+    
+    if(pendingOne.childElementCount === 0 &&
+       pendingTwo.childElementCount === 0 &&
+       pendingThree.childElementCount === 0){
+      createPendingBox('pendingOne')
+      createPendingBox('pendingTwo')
+      createPendingBox('pendingThree')
+    }
   }
 })
 document.addEventListener('mousemove', function(e) {
