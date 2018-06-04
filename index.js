@@ -58,12 +58,12 @@ var box2 = {
   ]
 }
 var pendingBoxComparisonTable = {}
-function createPendingBox() {
+function createPendingBox(pendingBox) {
   for(let i = 0 ; i < 1 ; i++){
     let randNum = Math.floor(Math.random() * (box.shape.length-1 - 0 + 1)) + 0;
     // randNum = 4
-    createPendingBoxDom(box.shape[randNum])
-    pendingBoxComparisonTable.pendingOne = box.shape[randNum]
+    createPendingBoxDom(box.shape[randNum],pendingBox)
+    pendingBoxComparisonTable[pendingBox] = box.shape[randNum]
   }
 }
 
@@ -74,7 +74,7 @@ function removePendingBoxDom(id) {
     removeDom.removeChild(removeDom.lastChild)
   }
 }
-function createPendingBoxDom(box) {
+function createPendingBoxDom(box,pendingBox) {
   let nodeY
   let nodeX
   box.some((row, y) => {
@@ -85,7 +85,8 @@ function createPendingBoxDom(box) {
       nodeX.classList.add('col')
       if(value){nodeX.classList.add('blue')}
       nodeY.appendChild(nodeX)
-      document.querySelector('.pendingOne').appendChild(nodeY)
+
+      document.querySelector(`.${pendingBox}`).appendChild(nodeY)
     })
   })
 }
@@ -98,6 +99,8 @@ var frameY = frame.getBoundingClientRect().top
 
 
 var pendingOne = document.querySelector('.pendingOne')
+var pendingTwo = document.querySelector('.pendingTwo')
+var pendingThree = document.querySelector('.pendingThree')
 var isMouseDown = false
 var startX = 0, startY = 0, endX = 0, endY = 0
 var selectedBox = ''
@@ -108,6 +111,19 @@ pendingOne.addEventListener('mousedown', function (e) {
   selectedBox = 'pendingOne'
 })
 
+pendingTwo.addEventListener('mousedown', function (e) {
+  isMouseDown = true
+  startX = e.clientX
+  startY = e.clientY
+  selectedBox = 'pendingTwo'
+})
+
+pendingThree.addEventListener('mousedown', function (e) {
+  isMouseDown = true
+  startX = e.clientX
+  startY = e.clientY
+  selectedBox = 'pendingThree'
+})
 function getFullLine() {
   let xFullLine = []
   let yFullLine = []
@@ -159,17 +175,14 @@ document.addEventListener('mouseup', function (e) {
     let posX = Math.floor(((pendingOne.getBoundingClientRect().left - frameX) + 25) / 50)
     let posY = Math.floor(((pendingOne.getBoundingClientRect().top - frameY) + 25) / 50)
 
-    // console.log(posX,posY)
-    let result = fillTable(pendingBoxComparisonTable.pendingOne,{x:posX,y:posY})
+    let result = fillTable(pendingBoxComparisonTable['pendingOne'],{x:posX,y:posY})
 
     pendingOne.style.left = 0 + "px"
     pendingOne.style.top = 0 + "px"
 
-    // console.log(table)
     if(result === 'success'){
       removePendingBoxDom()
-      createPendingBox()
-      // console.log(getFullLine());
+      createPendingBox('pendingOne')
       clearFullLine(getFullLine())
     }
 
@@ -195,7 +208,6 @@ function fillTable(box,point) {
   let boxFillEmpty = true
   box.some((row, y) => {
     row.some((value, x) => {
-      // console.log(y+point.y,x+point.x,value)
       if(value === 1){
         if((y+point.y) >= 0 && (x+point.x) >= 0 &&
           (y+point.y) < 10 && ((x+point.x) < 10)){
@@ -237,17 +249,6 @@ function checkGridEmpty(x,y) {
     return true
   }
 }
-createPendingBox()
-
-// function pendingBoxdraw(box) {
-//   box.shape.some((row, y) => {
-//     row.some((value, x) => {
-//       if(value === 1){
-//         let count = y*5 + x
-//         console.log(count);
-//         pendingCols[count].classList.add('blue')
-//       }
-//     })
-//   })
-// }
-// pendingBoxdraw(box)
+createPendingBox('pendingOne')
+createPendingBox('pendingTwo')
+createPendingBox('pendingThree')
